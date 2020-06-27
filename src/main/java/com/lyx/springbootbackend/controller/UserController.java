@@ -2,8 +2,9 @@ package com.lyx.springbootbackend.controller;
 
 import com.lyx.springbootbackend.entity.User;
 import com.lyx.springbootbackend.service.UserSerivce;
-import com.lyx.springbootbackend.util.HttpStatus;
+import com.lyx.springbootbackend.util.HttpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,75 +20,64 @@ public class UserController {
     private UserSerivce userSerivce;
 
     @PostMapping
-    public HttpStatus saveUser(User user) {
-        HttpStatus status = new HttpStatus();
+    public HttpResponse saveUser(User user) {
         try{
             this.userSerivce.save(user);
-            status.setHttpStatus(HttpStatus.success,"添加用户成功",user);
-            return status;
+            return HttpResponse.success("添加用户成功",user);
         }catch (Exception e){
-            status.setHttpStatus(HttpStatus.serverError,e.getMessage(),null);
-            return status;
+            return HttpResponse.failure(HttpResponse.SERVER_ERROR,e.getMessage());
         }
     }
 
     @DeleteMapping("/{id}")
-    public HttpStatus removeUser(@PathVariable Long id) {
-        HttpStatus status = new HttpStatus();
+    public HttpResponse removeUser(@PathVariable Long id) {
         try{
             boolean remove = this.userSerivce.removeById(id);
             if (remove) {
-                status.setHttpStatus(HttpStatus.success,"删除用户成功",null);
+                return HttpResponse.success("删除用户成功");
             } else {
-                status.setHttpStatus(HttpStatus.userError,"该用户已删除",null);
+                return HttpResponse.failure(HttpResponse.USER_ERROR,"该用户已删除");
             }
-            return status;
         }catch (Exception e){
-            status.setHttpStatus(HttpStatus.serverError,e.getMessage(),null);
-            return status;
+            return HttpResponse.failure(HttpResponse.SERVER_ERROR,e.getMessage());
         }
     }
 
     @PutMapping
-    public HttpStatus updateUser(User user) {
-        HttpStatus status = new HttpStatus();
+    public HttpResponse updateUser(User user) {
         try{
-            this.userSerivce.updateById(user);
-            status.setHttpStatus(HttpStatus.success,"修改用户成功",user);
-            return status;
+            boolean update = this.userSerivce.updateById(user);
+            if (update) {
+                return HttpResponse.success("修改用户成功",user);
+            } else {
+                return HttpResponse.failure(HttpResponse.USER_ERROR, "修改用户失败");
+            }
         }catch (Exception e){
-            status.setHttpStatus(HttpStatus.serverError,e.getMessage(),null);
-            return status;
+            return HttpResponse.failure(HttpResponse.SERVER_ERROR,e.getMessage());
         }
     }
 
     @GetMapping("/{id}")
-    public HttpStatus getUser(@PathVariable Long id) {
-        HttpStatus status = new HttpStatus();
+    public HttpResponse getUser(@PathVariable Long id) {
         try{
             User user = this.userSerivce.getById(id);
             if (user != null) {
-                status.setHttpStatus(HttpStatus.success,"查询用户成功",user);
+                return HttpResponse.success("查询用户成功",user);
             } else {
-                status.setHttpStatus(HttpStatus.userError,"查询用户失败",user);
+                return HttpResponse.failure(HttpResponse.USER_ERROR,"查询用户失败");
             }
-            return status;
         }catch (Exception e){
-            status.setHttpStatus(HttpStatus.serverError,e.getMessage(),null);
-            return status;
+            return HttpResponse.failure(HttpResponse.SERVER_ERROR,e.getMessage());
         }
     }
 
     @GetMapping
-    public HttpStatus getUserList() {
-        HttpStatus status = new HttpStatus();
+    public HttpResponse getUserList() {
         try{
             List<User> list = this.userSerivce.list();
-            status.setHttpStatus(HttpStatus.success,"查询用户列表成功", list);
-            return status;
+            return HttpResponse.success("查询用户列表成功", list);
         }catch (Exception e){
-            status.setHttpStatus(HttpStatus.serverError,e.getMessage(),null);
-            return status;
+            return HttpResponse.failure(HttpResponse.SERVER_ERROR,e.getMessage());
         }
     }
 }

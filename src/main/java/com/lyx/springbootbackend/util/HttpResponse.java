@@ -5,7 +5,7 @@ package com.lyx.springbootbackend.util;
  * @author LYX-夜光
  * @date 2020/6/22
  */
-public class HttpStatus {
+public class HttpResponse {
     public static final int SUCCESS = 200;
     public static final int USER_ERROR = 402;
     public static final int SERVER_ERROR = 500;
@@ -14,9 +14,26 @@ public class HttpStatus {
     private String msg;
     private Object data;
 
-    public static HttpStatus success() {
-        HttpStatus status = new HttpStatus();
-        status
+    public static HttpResponse success(String msg) {
+        HttpResponse response = new HttpResponse();
+        response.setCode(HttpResponse.SUCCESS);
+        response.setMsg(msg);
+        return response;
+    }
+
+    public static HttpResponse success(String msg, Object data) {
+        HttpResponse response = new HttpResponse();
+        response.setCode(HttpResponse.SUCCESS);
+        response.setMsg(msg);
+        response.setData(data);
+        return response;
+    }
+
+    public static HttpResponse failure(int code, String msg) {
+        HttpResponse response = new HttpResponse();
+        response.setCode(code);
+        response.setMsg(msg);
+        return response;
     }
 
     public int getCode() {
@@ -50,11 +67,5 @@ public class HttpStatus {
                 ", msg='" + msg + '\'' +
                 ", data=" + data +
                 '}';
-    }
-
-    public void setHttpStatus(int code, String msg, Object data) {
-        setCode(code);
-        setMsg(msg);
-        setData(data);
     }
 }
